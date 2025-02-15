@@ -99,6 +99,11 @@ final class CarController extends AbstractController
         
         // Validazione dell'oggetto prima di essere salvato
         $errors = $validator->validate($car);
+        
+        if (count($errors) > 0) {
+            return new JsonResponse(['error' => 'Validation failed', 'details' => (string) $errors], 400);
+        }
+
         try{
             //  estratto dalla documentazione , è possibile richiamare il metodo persist(), ma non ce n'è il bisogno
             //  perchè Doctrine è già FOCUSSATO sull'oggeto interessato per l'update
