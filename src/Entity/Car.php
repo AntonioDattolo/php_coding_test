@@ -28,6 +28,9 @@ class Car
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2)]
     private ?string $price = null;
 
+    //Per soft delete, aggiungo la colonna deletedAt
+    #[ORM\Column(type:"datetime", nullable: true)]
+    private ?\DateTimeInterface $deletedAt = null;
     public function getId(): ?int
     {
         return $this->id;
@@ -80,4 +83,20 @@ class Car
 
         return $this;
     }
+
+    //PER SOFTDELETE
+
+    private ?string $color = null;
+
+    public function getDeletedAt(): ?\DateTimeInterface
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeInterface $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+        return $this;
+    }
+ 
 }
