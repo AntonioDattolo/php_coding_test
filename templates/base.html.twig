@@ -13,5 +13,34 @@
     </head>
     <body>
         {% block body %}{% endblock %}
+         <ul>
+        <table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Brand</th>
+            <th>Model</th>
+            <th>Production Year</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for car in cars %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ car.brand }}</td>
+                <td>{{ car.model }}</td>
+                <td>{{ car.productionYear }}</td>
+                <td>€{{ car.price }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">No cars available.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+    </ul>
     </body>
 </html>
