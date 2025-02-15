@@ -22,6 +22,8 @@
             <th>Model</th>
             <th>Production Year</th>
             <th>Price</th>
+            <th>Condition</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
@@ -32,6 +34,20 @@
                 <td>{{ car.model }}</td>
                 <td>{{ car.productionYear }}</td>
                 <td>€{{ car.price }}</td>
+                <td>
+                    {% if car.isNew %}
+                        Nuova
+                    {% else %}
+                        Usata
+                    {% endif %}
+                </td>
+                <td>
+                    {% if car.state %}
+                        Disponibile
+                    {% else %}
+                        Venduta
+                    {% endif %}
+                </td>
             </tr>
         {% else %}
             <tr>
