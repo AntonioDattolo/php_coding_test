@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class CarController extends AbstractController
-{
+{  
     //METODO CREATE
     #[Route('/car/add', name: 'app_car')]
     public function createCar(EntityManagerInterface $entityManager ,ValidatorInterface $validator){
@@ -29,6 +29,10 @@ final class CarController extends AbstractController
             $newCar->setModel('M2');
             $newCar->setPrice(999.02);
             $newCar->setProductionYear(2020);
+            $newCar->setState(true); 
+            $newCar->setIsNew(rand(0, 1) == 1); 
+            $newCar->setCreatedAt(new \DateTime()); 
+            $newCar->setUpdatedAt(new \DateTime()); 
 
             // Validazione dell'oggetto prima di essere salvato
             $errors = $validator->validate($newCar);
@@ -95,11 +99,15 @@ final class CarController extends AbstractController
         $car->setBrand('Audi');
         $car->setModel('RS3');
         $car->setProductionYear(2023);
-        $car->setPrice(857.22);
+        $car->setPrice(257.22);
+        $car->setState(true); 
+        $car->setIsNew(rand(0, 1) == 1); 
+        $car->setCreatedAt(new \DateTime()); 
+        $car->setUpdatedAt(new \DateTime()); 
         
         // Validazione dell'oggetto prima di essere salvato
         $errors = $validator->validate($car);
-        
+
         if (count($errors) > 0) {
             return new JsonResponse(['error' => 'Validation failed', 'details' => (string) $errors], 400);
         }
@@ -168,4 +176,61 @@ final class CarController extends AbstractController
             'cars' => $cars
         ]);
     }
+
+    //riempire database per test
+    #[Route('/make_db', name: 'make_db')]
+public function makeDb(EntityManagerInterface $entityManager, ValidatorInterface $validator)
+{
+    // Crea un array per contenere le auto
+    $cars = [];
+
+    //Piccolo array di modelli
+    $models = [
+        'BMW 1 Series',
+        'BMW 2 Series',
+        'BMW 3 Series',
+        'BMW 4 Series',
+        'BMW 5 Series',
+        'BMW 6 Series',
+        'BMW 7 Series',
+        'BMW 8 Series',
+        'BMW X1',
+        'BMW X2',
+        'BMW X3',
+        'BMW X4',
+        'BMW X5',
+        'BMW X6',
+        'BMW X7'
+    ];
+    
+    // Esegui un ciclo per creare 15 auto
+    for ($i = 0; $i < 15; $i++) {
+        $newCar = new Car();
+        $newCar->setBrand('BMW'); // Aggiungi una numerazione al brand
+        $newCar->setModel($models[rand(0, 14)]); // Aggiungi una numerazione al modello
+        $newCar->setPrice(rand(10000, 50000) / 100); // Prezzo casuale tra 100.00 e 500.00
+        $newCar->setProductionYear(rand(2010, 2023)); // Anno di produzione casuale tra 2010 e 2023
+        $newCar->setState(true); // Imposta lo stato a true (ad esempio "disponibile")
+        $newCar->setIsNew(rand(0, 1) == 1); // Imposta se è nuova o usata casualmente
+        $newCar->setCreatedAt(new \DateTime()); // Data di creazione
+        $newCar->setUpdatedAt(new \DateTime()); // Data di aggiornamento
+
+        // Aggiungo l'auto all'array
+        $cars[] = $newCar;
+    }
+
+    try {
+        foreach ($cars as $car) {
+            $entityManager->persist($car); 
+        }
+        $entityManager->flush();
+    } catch (\Exception $e) {
+        // Gestisce eventuali errori durante il salvataggio
+        return new Response('Error cant saving cars: ' . $e->getMessage());
+    }
+
+    // Successo: ritorna il messaggio
+    return new JsonResponse(['success' => 'Saved 15 new Cars'], 201);
+}
+
 }
