@@ -2,25 +2,17 @@
 
 Questa è un'applicazione Symfony 7.2 per il coding test di un'API RESTful.
 
-## 1. Installazione del progetto
+## 1. Installazione 
  
-1.  **Crea il progetto Symfony:**
+**Clona il repository:**
 
-`composer create-project symfony/skeleton:"7.2.x" my_project_directory`
-
-***OPZIONALE***
-
-`composer require webapp`
+`git clone "link_repository"`
 
 ## 2. Configurazione iniziale
 
-1.  **Installazione ORM-PACK**
+**Installazione dipendenze**
 
-`composer require symfony/orm-pack`
-
-2.  **Strumenti per generare entity & controller**
-
-`composer require --dev symfony/maker-bundle`
+`composer i`
 
 ## 3. Configurazione DATABASE
 
@@ -53,35 +45,17 @@ Questa è un'applicazione Symfony 7.2 per il coding test di un'API RESTful.
 
 `php bin/console doctrine:migrations:migrate`
 
-5. **Aggiungere righe alla tabella**
+5. **Aggiungere record**
 
-**Creare il controller**
+**Inviare fixture per aggiungere i record nel db per eventuali test**
 
-`php bin/console make:controller CarController`
-
-***implementare metodo createCar()***
-
-***implementare metodo show()***
-
-***implementare metodo edit()***
-
-**implementare metodo delete()**
-
-*** implementato softDelete ***
-
-*** creata nuova migrazione per aggiungere la colonna 'deletedAt' ***
-
-
-
-
-
-
-
+`php bin/console doctrine:fixtures:load --append`
 
 # (OPZIONALE) Resettare il db
 
 ***Eliminare il db***
-`php bin/console doctrine:database:drop`
+
+`php bin/console doctrine:database:drop --force`
 
 **Cancellare migrations, manualmente e resettare la tabella delle migrations**
 
@@ -93,7 +67,53 @@ Questa è un'applicazione Symfony 7.2 per il coding test di un'API RESTful.
 
 `symfony server:start`
 
-## OPZIONALE AGGIUNGERE DATI FITTIZI PER TEST
+## 4. TEST UNITARI:
+
+**Linea di comando**
+
+***Avviare test unitari***
+
+`php bin/phpunit tests/unit`
+
+## 5. TEST DI INTEGRAZIONE
+
+1. **Configurare ambiente di test**
+
+***file .env.test**
+
+`DATABASE_URL="mysql://root:@127.0.0.1:3306/autoxy_coding_test_test"`
+
+2. **Creare database per test**
+
+***Linea di comando***
+
+`php bin/console doctrine:database:create --env=test`
+
+3. **Creare migrazione (nel caso non ci siano già. Controllare la cartella \migrations)**
+
+***Linea di comando**
+
+`php bin/console make:migration --env=test`
+
+4. **Creazione tabelle database**
+
+***Linea di comando***
+
+`php bin/console doctrine:migration:migrate --env=test`
+
+5. **Creazione record db**
+
+***Linea di comando***
+
+`php bin/console doctrine:fixtures:load --append --env=test`
+
+6. **Iniziare test di integrazione**
+
+***Linea di comando***
+
+`php bin/phpunit tests/integration`
+
+## OPZIONALE AGGIUNGERE DATI FITTIZI PER TEST // da rimuovere
 
 **VISITARE LA ROTTA 'make_db'**
 
