@@ -239,7 +239,7 @@ class Car
         
         $this->state = $state;
         // valore null genera un'eccezzione, solo in caso il front non gestisca bene la validazione
-        if ($state == null) {
+        if ($state === null) {
             throw new \InvalidArgumentException("Specify the status of the car (sold/available).");
         }
 
@@ -258,7 +258,7 @@ class Car
     public function setIsNew($isNew): static
     {
         $this->isNew = $isNew;
-        if ($isNew == null) {
+        if ($isNew === null) {
             throw new \InvalidArgumentException("Specify the condition of the car (new/used).");
         }
         if(!is_bool($isNew)){
