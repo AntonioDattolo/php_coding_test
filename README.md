@@ -113,9 +113,3 @@ Questa è un'applicazione Symfony 7.2 per il coding test di un'API RESTful.
 ***Linea di comando***
 
 `php bin/phpunit tests/integration`
-
-## OPZIONALE AGGIUNGERE DATI FITTIZI PER TEST // da rimuovere
-
-**VISITARE LA ROTTA 'make_db'**
-
-***saranno aggiunti 15 record nel db per i test***
