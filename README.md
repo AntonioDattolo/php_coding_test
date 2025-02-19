@@ -33,6 +33,7 @@ Questa è un'applicazione Symfony 7.2 per il coding test di un'API RESTful.
 ***eseguire il comando***
 
 `php bin/console make:entity nome_entity`
+
 **dopo aver eseguito il comando, compilare i campi**
 
 4. **Creare tabella nel db**
