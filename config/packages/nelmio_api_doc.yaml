@@ -1,0 +1,10 @@
+# config/packages/nelmio_api_doc.yaml
+nelmio_api_doc:
+    areas: # Optional, if you want to group your docs
+        default:
+            path_patterns: [ ^/api ]
+    documentation:
+        info:
+            title: My API
+            description: This is the API documentation
+            version: 1.0.0

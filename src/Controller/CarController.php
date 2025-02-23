@@ -12,12 +12,32 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+use OpenApi\Attributes as OA;
 final class CarController extends AbstractController
 {
     //**************************************METODO CREATE
 
-    #[Route('/car/create', name: 'car_create', methods: ['POST'])]
-
+    #[Route('/api/car/create', name: 'car_create', methods: ['POST'])]
+    
+    #[OA\Post(
+        path: "/api/car/create",
+        summary: "Create a new car",
+        requestBody: new OA\RequestBody(
+            description: "Brand, Model, Year, Price, State, isNew",
+            required: true),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'The new car has been saved successfully.',
+                content: new OA\JsonContent(
+                    type: "object",
+                    properties: [
+                        new OA\Property(property: "id", type: "integer", example: 1),
+                        new OA\Property(property: "model", type: "string", example: "Tesla Model S"),
+                    ])
+            )
+        ]
+    )]
     public function createCar(EntityManagerInterface $entityManager, ValidatorInterface $validator, Request $request)
     {
         $data = $request->request->all();
@@ -84,6 +104,37 @@ final class CarController extends AbstractController
     //********************************* METODO SHOW
 
     #[Route('api/car/show/{id}', name: 'car_show', methods: ['GET'])]
+    
+    #[OA\Get(
+        path: "/api/car/show/{id}",
+        summary: "Get a car by ID",
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "The ID of the car to retrieve",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Car found",
+                content: new OA\JsonContent(
+                    type: "object",
+                    properties: [
+                        new OA\Property(property: "brand", type: "string", example: "Tesla"),
+                        new OA\Property(property: "model", type: "string", example: "Model S"),
+                        new OA\Property(property: "price", type: "number", example: 55257.00),
+                        new OA\Property(property: "productionYear", type: "integer", example: 2023),
+                        new OA\Property(property: "state", type: "boolean", example: true),
+                        new OA\Property(property: "isNew", type: "boolean", example: false)
+                    ]
+                )
+            )
+        ]
+    )]
 
     public function show(EntityManagerInterface $entityManager, int $id, SerializerInterface $serializer)
     {
@@ -110,6 +161,47 @@ final class CarController extends AbstractController
     //********************************* METODO EDIT
 
     #[Route('api/car/edit/{id}', name: 'car_edit', methods: ['PUT'])]
+    
+    #[OA\Put(
+        path: "/api/car/edit/{id}",
+        summary: "Update a car by ID",
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "The ID of the car to update",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+    )],
+        requestBody: new OA\RequestBody(
+            description: "Updated car data",
+            required: true,
+            content: new OA\JsonContent(
+                type: "object",
+                properties: [
+                    new OA\Property(property: "brand", type: "string", example: "Tesla"),
+                    new OA\Property(property: "model", type: "string", example: "Model S"),
+                    new OA\Property(property: "price", type: "number", example: 55257.00),
+                    new OA\Property(property: "productionYear", type: "integer", example: 2023),
+                    new OA\Property(property: "state", type: "boolean", example: true),
+                    new OA\Property(property: "isNew", type: "boolean", example: false)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Car updated successfully",
+                content: new OA\JsonContent(
+                    type: "object",
+                    properties: [
+                        new OA\Property(property: "success", type: "string", example: "The car has been updated successfully"),
+                        new OA\Property(property: "car_id", type: "integer", example: 1)
+                    ]
+                )
+            ),    
+        ]
+    )]
 
     public function edit(EntityManagerInterface $entityManager, int $id, ValidatorInterface $validator, Request $request)
     {
@@ -169,6 +261,33 @@ final class CarController extends AbstractController
 
     //**************************METODO DELETE
     #[Route('api/car/delete/{id}', name: 'car_delete', methods: ['DELETE'])]
+    
+    #[OA\Delete(
+        path: "/api/car/delete/{id}",
+        summary: "Delete a car by ID (soft delete)",
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "The ID of the car to delete",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+        )],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Car marked as deleted",
+                content: new OA\JsonContent(
+                    type: "object",
+                    properties: [
+                        new OA\Property(property: "success", type: "string", example: "The Car has been marked as deleted."),
+                        new OA\Property(property: "deletedAt", type: "string", format: "date-time", example: "2023-10-01T12:34:56Z")
+                    ]
+                )
+            ),
+        ]
+    )]
+
     public function delete(EntityManagerInterface $entityManager, int $id)
     {
 

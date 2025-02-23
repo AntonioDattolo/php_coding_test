@@ -10,9 +10,92 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+use OpenApi\Attributes as OA;
+
 final class SearchController extends AbstractController
 {
     #[Route('/api/car/search', name: 'car_search', methods: ['GET'])]
+
+    #[OA\Get(
+        path: "/api/car/search",
+        summary: "Search cars by brand, price range, and state",
+        parameters: [
+            new OA\Parameter(
+                name: "brand",
+                in: "query",
+                description: "The brand of the car to search for",
+                required: true,
+                schema: new OA\Schema(type: "string", example: "BMW")
+            ),
+            new OA\Parameter(
+                name: "min",
+                in: "query",
+                description: "The minimum price of the car",
+                required: true,
+                schema: new OA\Schema(type: "number", example: 5000)
+            ),
+            new OA\Parameter(
+                name: "max",
+                in: "query",
+                description: "The maximum price of the car",
+                required: true,
+                schema: new OA\Schema(type: "number", example: 50000)
+            ),
+            new OA\Parameter(
+                name: "state",
+                in: "query",
+                description: "The state of the car (true for new, false for used)",
+                required: true,
+                schema: new OA\Schema(type: "boolean", example: true)
+            ),
+            new OA\Parameter(
+                name: "page",
+                in: "query",
+                description: "The page number for pagination",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Cars found",
+                content: new OA\JsonContent(
+                    type: "object",
+                    properties: [
+                        new OA\Property(property: "totalResult", type: "integer", example: 10),
+                        new OA\Property(property: "totalPage", type: "integer", example: 3),
+                        new OA\Property(property: "actualPage", type: "integer", example: 1),
+                        new OA\Property(
+                            property: "result",
+                            type: "array",
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: "id", type: "integer", example: 1),
+                                    new OA\Property(property: "brand", type: "string", example: "BMW"),
+                                    new OA\Property(property: "model", type: "string", example: "X5"),
+                                    new OA\Property(property: "price", type: "number", example: 45000.00),
+                                    new OA\Property(property: "state", type: "boolean", example: true)
+                                ]
+                            )
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 400,
+                description: "Invalid input or missing fields"
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Page not found"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Internal server error"
+            )
+        ]
+    )]
 
     public function searchCar(EntityManagerInterface $entityManager, Request $request, SerializerInterface $serializer)
     {
@@ -71,7 +154,7 @@ final class SearchController extends AbstractController
             }
 
             //calcoliamo l'offsett per la query
-            $pageNumber = ($page - 1) * $pageLimit; // l'offesett altrimenti partirebbe da uno e non da 0.
+            $pageNumber = ($page - 1 ) * $pageLimit; // l'offesett altrimenti partirebbe da uno e non da 0.
 
             //SQL query
             //SELECT COUNT(cars.id) FROM cars WHERE cars.brand LIKE '%BMW%' AND cars.price BETWEEN 5000 AND 50000 AND cars.state = 1;
@@ -120,7 +203,7 @@ final class SearchController extends AbstractController
             return new JsonResponse(
                 [
                     'totalResult' => count(json_decode($jsonTotalResult)),
-                    'totalPage' => count(json_decode($jsonCar)), // totale risultati trovati per pagina
+                    'totalPage' => ceil(count($totalResult) / $pageLimit), // totale risultati trovati per pagina
                     'actualPage' => $page,
                     'result' => json_decode($jsonCar),
                 ],
