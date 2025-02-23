@@ -29,6 +29,7 @@
 						<li class="nav-item">
 							<a class="nav-link active" href="{{ path('car_index') }}" aria-current="page" href="#">Home</a>
 						</li>
+
 						{% if app.user %}
 							<li class="nav-item">
 								<a class="nav-link" href="{{ path('app_logout') }}">Logout</a>
@@ -41,58 +42,50 @@
 								<a class="nav-link" href="{{ path('app_register') }}">Registrati</a>
 							</li>
 						{% endif %}
+
+						<li class="nav-item">
+							<a class="nav-link" href="/api/doc">API DOC</a>
+						</li>
 					</ul>
 				</div>
 			</div>
 		</nav>
 
+	
 
-		{% block body %}{% endblock %}
-		<ul>
-			<table>
-				<thead>
-					<tr>
-						<th>#</th>
-						<th>Brand</th>
-						<th>Model</th>
-						<th>Production Year</th>
-						<th>Price</th>
-						<th>Condition</th>
-						<th>Status</th>
-					</tr>
-				</thead>
-				<tbody>
-					{# {% for car in cars %}
-					                <tr>
-					                    <td>{{ loop.index }}</td>
-					                    <td>{{ car.brand }}</td>
-					                    <td>{{ car.model }}</td>
-					                    <td>{{ car.productionYear }}</td>
-					                    <td>€{{ car.price }}</td>
-					                    <td>
-					                        {% if car.isNew %}
-					                        Nuova
-					                        {% else %}
-					                        Usata
-					                        {% endif %}
-					                    </td>
-					                    <td>
-					                        {% if car.state %}
-					                        Disponibile
-					                        {% else %}
-					                        Venduta
-					                        {% endif %}
-					                    </td>
-					                </tr>
-					                {% else %}
-					                <tr>
-					                    <td colspan="5">No cars available.</td>
-					                </tr>
-					                {% endfor %} #}
-				</tbody>
-			</table>
+		 <section class="container pt-3">
+			<h1 class="text-center">Barra di ricerca</h1>
 
-		</ul>
+			<form class="d-flex flex-wrap justify-content-center" role="search" action="{{ path('car_search') }}" method="GET">
+				<div class="col-11 text-center p-2">
+					<label for=""></label>
+					<input class="form-control col-3" type="text" name="brand" placeholder="Search" aria-label="Search" required>
+				</div>
+				<div class="col-4 text-center p-2">
+					<label for="state"></label>
+					<input class="p-2 border" type="text" name="state" placeholder="State" aria-label="State" required>
+				</div>
+				<div class="col-4 text-center p-2">
+					<label for="min"></label>
+					<input class="p-2 border" type="number" placeholder="Min Price" aria-label="Min Price" name="min" required>
+				</div>
+				<div class="col-4 text-center p-2">
+					<label for="max"></label>
+					<input class="p-2 border" type="number" placeholder="Max Price" aria-label="Max Price" name="max" required>
+				</div>
+				<div class="col-3 p-2">
+					<input class="d-none" type="hidden" name="page" value="1">
+				</div>
+				
+					<button class="btn btn-outline-success" type="submit">Search</button>
+				
+			</form>
+
+				{# hello controller ecc #}
+				{% block body %}{% endblock %} 
+
+
+		</section> 
 	</body>
 
 </html>

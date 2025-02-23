@@ -6,24 +6,29 @@
 <section class="container d-flex justify-content-center">
     <div class="w-25 p-1">
 
-        <form action="{{ path('app_login') }}" method="post">
-            {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-            {% endif %}
+        {# Visualizza i messaggi di errore come flash messages #}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
 
-            {% if app.user %}
+        {# Se l'utente è già loggato #}
+        {% if app.user %}
             <div class="mb-3">
                 You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
             </div>
-            {% endif %}
+        {% endif %}
 
+        {# Form di login #}
+        <form action="{{ path('app_login') }}" method="post">
             <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+
             <label for="inputEmail">Email</label>
-            <input type="email" name="email" id="inputEmail" class="form-control" autocomplete="email" required
-                autofocus>
+            <input type="email" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus value="{{ last_username }}">
+
             <label for="inputPassword">Password</label>
-            <input type="password" name="password" id="inputPassword" class="form-control"
-                autocomplete="current-password">
+            <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
 
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
@@ -33,10 +38,8 @@
                 </label>
             </div>
 
-            <button class="btn btn-lg btn-primary" type="submit">
-                Sign in
-            </button>
+            <button class="btn btn-lg btn-primary" type="submit">Sign in</button>
         </form>
+    </div>
 </section>
-</div>
 {% endblock %}
