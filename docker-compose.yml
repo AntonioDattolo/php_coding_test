@@ -1,0 +1,41 @@
+#version: '3.8'
+
+services:
+  # Servizio per l'applicazione Symfony
+  app:
+    build: .
+    container_name: symfony_app
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "mysql://root:password@db:3306/symfony_db"
+
+  # Servizio per MySQL
+  db:
+    image: mysql:8.0
+    container_name: symfony_db
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: symfony_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # Servizio per phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: symfony_phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: password
+    depends_on:
+      - db
+
+# Volume per persistenza dei dati di MySQL
+volumes:
+  mysql_data:

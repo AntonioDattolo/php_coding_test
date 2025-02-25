@@ -149,8 +149,8 @@ final class SearchController extends AbstractController
             }
 
             //validazione pagina N.B. di default dovrebbe essere impostata a 1
-            if ($page <= 0) {
-                return new JsonResponse(['error' => 'Error 400 : Invalid value for page. Expected value greater than zero.'], 400);
+            if ($page < 1) {
+                return new JsonResponse(['error' => 'Error 400 : Invalid value for page. Expected value greater than zero.1'], 400);
             }
 
             //calcoliamo l'offsett per la query
@@ -170,7 +170,7 @@ final class SearchController extends AbstractController
                 ->setParameter('maxPrice', $data['max'])
                 ->setParameter('state', $data['state'])
                 ->orderBy('cars.price', 'ASC')
-                ->setFirstResult($pageNumber) //setta da quale risultato far iniziare la pagina
+                ->setFirstResult(ceil($pageNumber)) //setta da quale risultato far iniziare la pagina
                 ->setMaxResults($pageLimit) //setta il numero massimo di risultati per pagina
                 ->getQuery()
                 ->getResult();
@@ -196,7 +196,7 @@ final class SearchController extends AbstractController
 
             $jsonTotalResult = $serializer->serialize($totalResult, 'json');
 
-            if ($page > count(json_decode($jsonTotalResult)) / $pageLimit) {
+            if ($page >= (ceil(count(json_decode($jsonTotalResult))) / $pageLimit) + 1) {
                 return new JsonResponse(['error' => 'Error 404 : Invalid value for page. Page not found.'], 404);
             }
 
